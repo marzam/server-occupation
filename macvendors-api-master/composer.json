@@ -1,0 +1,20 @@
+{
+    "name": "macvendors/macvendors-api",
+    "description": "Macvendors.co Lookup API in PHP,Lookup for vendors name using mac address",
+    "type": "API",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Macvendors",
+            "email": "info@macvendors.co"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "macvendors_co": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+	"prefer-stable" : true,
+    "require": {}
+}

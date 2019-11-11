@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+		<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" >
+			window.onload = function() {
+				var urlParams = new URLSearchParams(window.location.search);
+				var minutos = urlParams.get('minutos');
+				var dataPoints = [];
+				var dataPointsSignal = [];
+				var chart = new CanvasJS.Chart("chartContainer", {
+					animationEnabled: true,
+					title: {
+						text: "Ocupação nos últimos ".concat(minutos).concat(" minutos")
+					},
+					axisY: {
+						maximum: 200,
+						title: "Número de dispositivos"
+					},
+					data: [{
+						type: "bar",
+						//xValueType: "dateTime",
+						dataPoints: dataPoints,
+					}]
+				});
+				var chartSignal = new CanvasJS.Chart("chartContainerSignal", {
+					animationEnabled: true,
+					//title: {
+					//	text: "Nivel de sinal"
+					//},
+					axisY: {
+						//maximum: 200,
+						title: "Nível de sinal dos dispositivos"
+					},
+					data: [{
+						type: "line",
+						xValueType: "dateTime",
+						dataPoints: dataPointsSignal,
+					}]
+				});
+				$.getJSON("live.php?minutos=".concat(minutos), function(data) {
+					$.each(data, function(key, value){
+						dataPoints.push({y: parseInt(value.y), label: value.x})
+					});
+					chart.render();
+					//updateChart();
+				});
+				$.getJSON("live_signal.php?minutos=".concat(minutos), function(data) {
+					$.each(data, function(key, value){
+						dataPointsSignal[parseInt(value.x)].push({x: Date.now(), y: parseFloat(value.y)})
+					});
+					chartSignal.render();
+					updateChart();
+				});
+				function updateChart() {
+				$.getJSON("live.php?minutos=".concat(minutos), function(data) {
+					dataPoints.pop();
+					$.each(data, function(key, value){
+						dataPoints.push({y: parseInt(value.y), label: value.x})
+					});
+					chart.render();
+				});
+				$.getJSON("live_signal.php?minutos=".concat(minutos), function(data) {
+					while(dataPointsSignal.length > 0) {
+						    dataPointsSignal.pop();
+					}
+					$.each(data, function(key, value){
+						dataPointsSignal[parseInt(value.x)].push({x: Date.now(), y: parseFloat(value.y)})
+					});
+					chartSignal.render();
+					setTimeout(function(){updateChart()}, 1000);
+				});
+				}
+				//console.log(dataPoints);
+			}
+		</script>
+	</head>
+	<body>
+		<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+		<div id="chartContainerSignal" style="height: 300px; width: 100%;"></div>
+	</body>
+</html>                              

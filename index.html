@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>Banco de dados da ocupação do IM (versão 0.1 alpha)</title>
+  <style>
+  p {
+    margin: 0;
+    color: blue;
+  }
+  div,p {
+    margin-left: 10px;
+  }
+  span {
+    color: red;
+  }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+</head>
+<body>
+ 
+<p><br><br>Gráfico da ocupação ao vivo:</p>
+<form action="live.html" method="get" target="plotAreaLive">
+  <div>
+    Últimos <input type="text" name="minutos" placeholder="MM"> minutos.
+    <input type="submit" value="Atualizar">
+  </div>
+</form>
+<br>
+<br>
+<iframe src="live.html?minutos=5" name="plotAreaLive" height=620px width=800px>
+	  <p>Your browser does not support iframes.</p>
+</iframe>
+
+<p><br><br>Gráfico diário de ocupação:</p>
+<!-- <form action="javascript:alert( 'success!' );"> -->
+<form action="diario.html" method="get" target="plotAreaDiario">
+  <div>
+    Data: <input type="text" name="date" placeholder="YYYY-MM-DD">
+    <input type="submit" value="Plotar">
+  </div>
+</form>
+<br>
+<br>
+<iframe src="about:blank" name="plotAreaDiario" height=400px width=800px>
+	  <p>Your browser does not support iframes.</p>
+</iframe>
+
+<span></span>
+ 
+<script>
+$( "form" ).submit(function( event ) {
+  //if ( $( "input" ).first().val() === "correct" ) {
+  //  $( "span" ).text( "Validated..." ).show();
+  //  return;
+  //}
+ 
+  //$( "span" ).text( "Not valid!" ).show().fadeOut( 1000 );
+  //event.preventDefault();
+  return;
+});
+</script>
+ 
+</body>
+</html>

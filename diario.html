@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+		<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" >
+			window.onload = function() {
+				var urlParams = new URLSearchParams(window.location.search);
+				var date = urlParams.get('date');
+				var dataPoints = [];
+				var chart = new CanvasJS.Chart("chartContainer", {
+					title: {
+						text: "Ocupação do dia ".concat(date)
+					},
+					axisY: {
+						title: "Número de dispositivos"
+					},
+					data: [{
+						type: "line",
+						xValueType: "dateTime",
+						//markerType: "cross",
+						dataPoints: dataPoints,
+					}]
+				});
+				$.getJSON("diario.php?date=".concat(date), function(data) {
+					console.log(data);
+					//dataPoints = data.slice();
+					//console.log(dataPoints);
+					$.each(data, function(key, value){
+						dataPoints.push({x: parseInt(value.x), y: parseInt(value.y)})
+					});
+					console.log(dataPoints);
+					chart.render();
+				});
+				//console.log(dataPoints);
+			}
+		</script>
+	</head>
+	<body>
+		<div id="chartContainer" style="height: 370px; width: 100%;"></div>
+	</body>
+</html>                              

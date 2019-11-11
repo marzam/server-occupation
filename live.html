@@ -1,0 +1,132 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+		<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" >
+			window.onload = function() {
+				var urlParams = new URLSearchParams(window.location.search);
+				var minutos = urlParams.get('minutos');
+				var dataPoints = [];
+				var dataPointsSignal = [];
+				var chart = new CanvasJS.Chart("chartContainer", {
+					animationEnabled: true,
+					title: {
+						text: "Ocupação nos últimos ".concat(minutos).concat(" minutos")
+					},
+					axisY: {
+						maximum: 200,
+						title: "Número de dispositivos"
+					},
+					data: [{
+						type: "bar",
+						//xValueType: "dateTime",
+						dataPoints: dataPoints,
+					}]
+				});
+				var chartSignal = new CanvasJS.Chart("chartContainerSignal", {
+					zoomEnabled: true,
+					//animationEnabled: true,
+					//title: {
+					//	text: "Nivel de sinal"
+					//},
+					toolTip:{   
+						content: "{name}: {y}"      
+					},
+					axisY: {
+						maximum: 0,
+						minimum: -100,
+						title: "Nível de sinal dos dispositivos"
+					},
+					legend: {
+						cursor: "pointer",
+						itemmouseover: function(e) {
+							e.dataSeries.lineThickness = e.chart.data[e.dataSeriesIndex].lineThickness * 2;
+							e.dataSeries.markerSize = e.chart.data[e.dataSeriesIndex].markerSize + 2;
+							e.chart.render();
+						},
+						itemmouseout: function(e) {
+							e.dataSeries.lineThickness = e.chart.data[e.dataSeriesIndex].lineThickness / 2;
+							e.dataSeries.markerSize = e.chart.data[e.dataSeriesIndex].markerSize - 2;
+							e.chart.render();
+						},
+						itemclick: function (e) {
+							if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+								e.dataSeries.visible = false;
+							} else {
+								e.dataSeries.visible = true;
+							}
+							e.chart.render();
+						}
+					},
+					data: dataPointsSignal
+					//	[{
+					//	type: "line",
+					//	xValueType: "dateTime",
+					//	dataPoints: dataPointsSignal,
+					//}]
+				});
+				$.getJSON("live.php?minutos=".concat(minutos), function(data) {
+					$.each(data, function(key, value){
+						dataPoints.push({y: parseInt(value.y), label: value.x})
+					});
+					chart.render();
+					//updateChart();
+				});
+				$.getJSON("live_signal_new.php?minutos=".concat(minutos), function(data) {
+					var ids = [-1];
+					var i = 0;
+					$.each(data, function(key, value){
+						if (value.id != ids[i]){
+							dataPointsSignal.push({type: "line", showInLegend: true, visible: true, name: value.id, content: "{name}: {y}", valueFormatString: "HH:mm:ss.fff", xValueType: "dateTime", dataPoints: []});
+							i++;
+							ids.push(value.id);
+						}
+						dataPointsSignal[i-1].dataPoints.push({x: value.x, y: parseFloat(value.y)});
+					});
+					chartSignal.render();
+					setTimeout(function(){updateChart()}, 10000);
+					//updateChart();
+				});
+				function updateChart() {
+				$.getJSON("live.php?minutos=".concat(minutos), function(data) {
+					while(dataPoints.length > 0) {
+						    dataPoints.pop();
+					}
+					//dataPoints.pop();
+					$.each(data, function(key, value){
+						dataPoints.push({y: parseInt(value.y), label: value.x})
+					});
+					chart.render();
+				});
+				$.getJSON("live_signal_new.php?minutos=".concat(minutos), function(data) {
+					while(dataPointsSignal.length > 0) {
+						    dataPointsSignal.pop();
+					}
+					var ids = [-1];
+					var i = 0;
+					$.each(data, function(key, value){
+						if (value.id != ids[i]){
+							dataPointsSignal.push({type: "line", showInLegend: true, visible: true, name: value.id, content: "{name}: {y}", valueFormatString: "HH:mm:ss.fff", xValueType: "dateTime", dataPoints: []});
+							i++;
+							ids.push(value.id);
+						}
+						dataPointsSignal[i-1].dataPoints.push({x: value.x, y: parseFloat(value.y)});
+					});
+					//$.each(data, function(key, value){
+					//	dataPointsSignal.push({y: parseFloat(value.y), label: value.x})
+					//});
+					chartSignal.render();
+					setTimeout(function(){updateChart()}, 10000);
+				});
+				}
+				//console.log(dataPoints);
+			}
+		</script>
+	</head>
+	<body>
+		<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+		<div id="chartContainerSignal" style="height: 300px; width: 100%;"></div>
+	</body>
+</html>                              
