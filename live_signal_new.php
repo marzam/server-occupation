@@ -42,7 +42,7 @@ function get_value($conn, $mysql){
 		//printf ("%s,%s\n", $row["date_time"], $row["device_signal"]);	    
 		//array_push($myArray, array("y" => $row["size"], "x" => $row["hour"]));
 		$date = date_create_from_format("Y-m-d H:i:s.u", $row["time"]); 
-		array_push($myArray, array("id" => $row["mac"], "y" => $row["signal"], "x" => ($date->getTimestamp()*1000)+substr($date->format('u'),0,3))); //strtotime($row["time"])*1000)); //$row["time"]));
+		array_push($myArray, array("id" => $row["id_addr"], "y" => $row["signal"], "x" => ($date->getTimestamp()*1000)+substr($date->format('u'),0,3))); //strtotime($row["time"])*1000)); //$row["time"]));
 
 		//array_push($myArray, array("y" => $row["device_signal"], "x" => date_create_from_format('Y/m/d H:i:s', $row["date_time"])));
 	}
@@ -65,8 +65,8 @@ function get_value($conn, $mysql){
 $conn = connect_mysql();
 
 $minutos = htmlspecialchars($_GET["minutos"]);
-$dataPoints = get_value($conn, "select mac, date_time as 'time', device_signal as 'signal' from tbNetworkRecord_v2 where date_time < current_timestamp and date_time > date_add(current_timestamp, interval -" . $minutos . " minute) and substring(pack_type,4,1) = '8' order by mac, time;");
-#$dataPoints = get_value($conn, "select id_addr, date_time as 'time', device_signal as 'signal' from tbNetworkRecord where date_time < current_timestamp and date_time > date_add(current_timestamp, interval -" . $minutos . " minute) and substring(pack_type,4,1) = '8' order by id_addr, time;");
+#$dataPoints = get_value($conn, "select mac, date_time as 'time', device_signal as 'signal' from tbNetworkRecord_v2 where date_time < current_timestamp and date_time > date_add(current_timestamp, interval -" . $minutos . " minute) and substring(pack_type,4,1) = '8' order by mac, time;");
+$dataPoints = get_value($conn, "select id_addr, date_time as 'time', device_signal as 'signal' from tbNetworkRecord where date_time < current_timestamp and date_time > date_add(current_timestamp, interval -" . $minutos . " minute) and substring(pack_type,4,1) = '8' order by id_addr, time;");
 #$dataPoints = get_value($conn, "select id_addr, date_time as 'time', device_signal as 'signal' from tbNetworkRecord where date_time < current_timestamp and date_time > date_add(current_timestamp, interval -" . $minutos . " minute) and substring(pack_type,3,2) = '40' order by id_addr, time;");
 
 

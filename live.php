@@ -63,8 +63,8 @@ function get_value($conn, $mysql){
 $conn = connect_mysql();
 
 $minutos = htmlspecialchars($_GET["minutos"]);
-$dataPoints = get_value($conn, "select device_id as id, count(distinct mac) as size from tbNetworkRecord_v2 where date_time < current_timestamp and date_time > date_add(current_timestamp, interval -" . $minutos . " minute) and substring(pack_type,4,1) = '8' group by device_id;");
-#$dataPoints = get_value($conn, "select device_id as id, count(distinct id_addr) as size from tbNetworkRecord where date_time < current_timestamp and date_time > date_add(current_timestamp, interval -" . $minutos . " minute) and substring(pack_type,4,1) = '8' group by device_id;");
+#$dataPoints = get_value($conn, "select device_id as id, count(distinct mac) as size from tbNetworkRecord_v2 where date_time < current_timestamp and date_time > date_add(current_timestamp, interval -" . $minutos . " minute) and substring(pack_type,4,1) = '8' group by device_id;");
+$dataPoints = get_value($conn, "select device_id as id, count(distinct id_addr) as size from tbNetworkRecord where date_time < current_timestamp and date_time > date_add(current_timestamp, interval -" . $minutos . " minute) and substring(pack_type,4,1) = '8' group by device_id;");
 #$dataPoints = get_value($conn, "select device_id as id, count(distinct id_addr) as size from tbNetworkRecord where date_time < current_timestamp and date_time > date_add(current_timestamp, interval -" . $minutos . " minute) and substring(pack_type,3,2) = '40' group by device_id;");
 
 
